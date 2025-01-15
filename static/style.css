@@ -1,0 +1,260 @@
+/* Estilos Generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    background-color: #fafafa;
+    color: #d7d0d0;
+    padding-top: 40px; /* Asegura que el contenido no quede oculto detrás de la barra de navegación */
+}
+
+a {
+    text-decoration: none;
+    color: #007bbb;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #394858;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+/* Barra de navegación */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+    text-align: left;
+    margin-left: 30px;
+}
+
+.navbar .menu {
+    list-style: none;
+    text-align: right;
+    margin-right: 10px;
+}
+
+.navbar .menu li {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.navbar .menu li a {
+    font-size: 18px;
+    color: #fff;
+}
+
+.navbar .menu li a:hover {
+    color: #ff4e00;
+}
+
+/* Sección de Hero / Encabezado */
+.hero {
+    background-color: #435160;
+    color: #fff;
+    padding: 80px 0 40px;
+    text-align: center;
+    margin-bottom: 60px; /* Aumentar espacio entre la cabecera y las noticias */
+}
+
+.hero h2 {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.cta {
+    background-color: #ff4e00;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.cta:hover {
+    background-color: #e04a00;
+}
+
+/* Sección de Noticias */
+.noticias {
+    background-color: #fff;
+    padding: 40px 0;
+}
+
+.noticias .noticia {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.noticia:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.noticia-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.noticia .titulo h3 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.noticia p {
+    margin-top: 10px;
+    color: #555;
+}
+
+.leer-mas {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.leer-mas:hover {
+    background-color: #0056b3;
+}
+
+#noticiasIniciales {
+    display: block;
+}
+
+#noticiasAdicionales {
+    display: none;
+}
+
+/* Botón "Ver Más" */
+#verMasBtn {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px; /* Relleno extra para una apariencia mejorada */
+    border-radius: 5px;
+    margin: 0; /* Sin márgenes extras */
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#verMasBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Si existe un contenedor que rodea al botón, eliminar fondo */
+#verMasBtnContainer {
+    background-color: transparent; /* Sin color de fondo */
+    padding: 0;
+    margin: 0;
+}
+
+/* Sección de Contacto */
+#contacto {
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 40px 0;
+}
+
+#contacto p {
+    font-size: 18px;
+    color: #555;
+}
+
+#contacto a {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Pie de página */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+footer p {
+    font-size: 16px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .navbar .menu {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .navbar .menu li {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .hero h2 {
+        font-size: 28px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+
+    .noticia {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .noticia-img {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 15px;
+    }
+}

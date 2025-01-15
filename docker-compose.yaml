@@ -1,0 +1,16 @@
+version: "2.2"  # Actualiza a una versión más reciente
+ 
+services:
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+    environment:
+      FLASK_ENV: development  # Define entorno de desarrollo
+      FLASK_APP: app.py       # Especifica el archivo de la aplicación Flask
+    command: flask run --host=0.0.0.0  # Permite que Flask escuche en todas las interfaces
+    restart: unless-stopped  # Reinicia el contenedor a menos que se detenga manualmente
