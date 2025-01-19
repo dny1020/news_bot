@@ -16,7 +16,7 @@ app.register_error_handler(Exception, handle_generic_exception)  # Manejador de 
 app.register_error_handler(APIError, handle_api_error)  # Manejador de excepciones de API
 
 # Intervalo en minutos para actualizar las noticias
-INTERVALO_ACTUALIZACION = 60  # Cambia este valor según tu necesidad
+INTERVALO_ACTUALIZACION = 360  # Cambia este valor según tu necesidad
 
 # Función para actualizar noticias periódicamente
 def actualizar_noticias_periodicamente():
