@@ -67,4 +67,4 @@ if __name__ == "__main__":
     # Iniciar la actualización periódica de noticias
     actualizar_noticias_periodicamente()
     # Ejecutar la aplicación Flask
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000)
