@@ -1,16 +1,28 @@
-version: "2.2"  # Actualiza a una versión más reciente
- 
 services:
   flask-app:
     build:
       context: .
-      dockerfile: Dockerfile
+    container_name: flask-app
+    networks:
+      - app-network
+    expose:
+      - "5000"
+    restart: always
+
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: always
+    networks:
+      - app-network
     ports:
       - "80:80"
+      - "443:443"  # HTTPS
+      - "81:81"    # Panel de administración de Nginx Proxy Manager
     volumes:
-      - .:/app
-    environment:
-      FLASK_ENV: development  # Define entorno de desarrollo
-      FLASK_APP: app.py       # Especifica el archivo de la aplicación Flask
-    command: flask run --host=0.0.0.0  # Permite que Flask escuche en todas las interfaces
-    restart: unless-stopped  # Reinicia el contenedor a menos que se detenga manualmente
+      - ./nginx-proxy-manager/data:/data
+      - ./nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+
+networks:
+  app-network:
+    driver: bridge

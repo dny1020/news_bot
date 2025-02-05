@@ -6,63 +6,61 @@ from exceptions import APIError, handle_generic_exception, handle_404_error, han
 import threading
 from apinews import obtener_noticias_ciberseguridad, guardar_noticias_y_limpiar
 import glob
+import time
 
 app = Flask(__name__)
 
 # Registrar manejadores de excepciones en la aplicación
-app.register_error_handler(404, handle_404_error)  # Error 404
-app.register_error_handler(Exception, handle_generic_exception)  # Manejador de excepciones generales
-app.register_error_handler(APIError, handle_api_error)  # Manejador de excepciones de API
+app.register_error_handler(404, handle_404_error)
+app.register_error_handler(Exception, handle_generic_exception)
+app.register_error_handler(APIError, handle_api_error)
 
 # Intervalo en minutos para actualizar las noticias
-INTERVALO_ACTUALIZACION = 360  # Cambia este valor según tu necesidad
+INTERVALO_ACTUALIZACION = 240  # Puedes modificarlo según tu necesidad
 
-# Función para actualizar noticias periódicamente
 def actualizar_noticias_periodicamente():
-    try:
-        print("Iniciando actualización de noticias...")
-        noticias = obtener_noticias_ciberseguridad()
-        if noticias:
-            guardar_noticias_y_limpiar(noticias)
-            print("Noticias actualizadas y guardadas correctamente.")
-        else:
-            print("No se obtuvieron noticias para actualizar.")
-    except Exception as e:
-        print(f"Error en la actualización de noticias: {e}")
-    finally:
-        # Reprogramar el temporizador para el siguiente ciclo
-        threading.Timer(INTERVALO_ACTUALIZACION * 60, actualizar_noticias_periodicamente).start()
+    """Función que actualiza las noticias periódicamente en segundo plano."""
+    while True:
+        try:
+            print(f"[{datetime.now()}] Iniciando actualización de noticias...")
+            noticias = obtener_noticias_ciberseguridad()
+            if noticias:
+                guardar_noticias_y_limpiar(noticias)
+                print(f"[{datetime.now()}] Noticias actualizadas correctamente.")
+            else:
+                print(f"[{datetime.now()}] No se encontraron noticias nuevas.")
+        except Exception as e:
+            print(f"[{datetime.now()}] Error en la actualización de noticias: {e}")
+        
+        # Esperar el intervalo antes de la próxima actualización
+        time.sleep(INTERVALO_ACTUALIZACION * 60)
 
 @app.route('/')
 def mostrar_noticias():
-    # Buscar el archivo JSON más reciente
+    """Carga y muestra las noticias desde el archivo JSON más reciente."""
     archivo_json = None
     archivos_json = glob.glob("noticias_ciberseguridad_*.json")
 
     if archivos_json:
-        # Seleccionar el archivo más reciente basado en el nombre
         archivo_json = max(archivos_json, key=os.path.getctime)
-    
+
     noticias = []
     if archivo_json:
         try:
             with open(archivo_json, "r") as f:
                 noticias = json.load(f)
         except json.JSONDecodeError as e:
-            # Error si el archivo JSON está malformado
             raise APIError(f"Error al decodificar el archivo JSON: {e}", 500)
         except Exception as e:
-            # Captura cualquier otra excepción relacionada con el manejo de archivos
             raise APIError(f"Error al leer el archivo de noticias: {str(e)}", 500)
 
-    # Renderizar la plantilla HTML y pasar las noticias como contexto
     return render_template('noticias.html', noticias=noticias)
 
 @app.route('/ads.txt')
 def ads_txt():
+    """Devuelve el archivo ads.txt desde la carpeta estática."""
     return send_from_directory('static', 'ads.txt')
 
-if __name__ == "__main__":
-    # Iniciar la actualización periódica de noticias
-    hilo_noticias = threading.Thread(target=actualizar_noticias_periodicamente, daemon=True)
-    hilo_noticias.start()
+# Iniciar el hilo de actualización de noticias en segundo plano
+hilo_noticias = threading.Thread(target=actualizar_noticias_periodicamente, daemon=True)
+hilo_noticias.start()

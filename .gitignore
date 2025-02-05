@@ -1,2 +1,18 @@
-.DS_Store
+# Ignorar archivos del entorno virtual
 venv/
+.venv/
+
+# Archivos temporales y caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# Configuraciones y credenciales
+.env
+*.swp
+*.swo
+
+# Archivos generados automáticamente
+noticias_ciberseguridad_*.json
+nginx-proxy-manager/

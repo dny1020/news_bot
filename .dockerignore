@@ -1,2 +1,14 @@
-/venv
-/__pycache__
+# Ignorar archivos y carpetas que no se necesitan en la imagen Docker
+.git
+.gitignore
+.dockerignore
+*.pyc
+__pycache__/
+*.log
+*.swp
+*.swo
+.env
+.venv/
+venv/
+nginx-proxy-manager/
+noticias_ciberseguridad_*.json
