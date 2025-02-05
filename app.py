@@ -7,7 +7,6 @@ import threading
 from apinews import obtener_noticias_ciberseguridad, guardar_noticias_y_limpiar
 import glob
 
-
 app = Flask(__name__)
 
 # Registrar manejadores de excepciones en la aplicación
@@ -65,6 +64,5 @@ def ads_txt():
 
 if __name__ == "__main__":
     # Iniciar la actualización periódica de noticias
-    actualizar_noticias_periodicamente()
-    # Ejecutar la aplicación Flask
-    app.run(host='0.0.0.0', port=5000)
+    hilo_noticias = threading.Thread(target=actualizar_noticias_periodicamente, daemon=True)
+    hilo_noticias.start()
