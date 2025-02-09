@@ -1,60 +1,67 @@
 from flask import Flask, render_template, jsonify, send_from_directory
 import json
 import os
-from datetime import datetime
-from exceptions import APIError, handle_generic_exception, handle_404_error, handle_api_error
 import threading
-from apinews import obtener_noticias_ciberseguridad, guardar_noticias_y_limpiar
-import glob
 import time
+import logging
+from datetime import datetime
+import glob
+from exceptions import APIError, handle_generic_exception, handle_404_error, handle_api_error
+from apinews import obtener_noticias_ciberseguridad, guardar_noticias_y_limpiar
+import requests
+
+# Configurar logging en lugar de print()
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 app = Flask(__name__)
 
-# Registrar manejadores de excepciones en la aplicación
+# Registrar manejadores de errores
 app.register_error_handler(404, handle_404_error)
 app.register_error_handler(Exception, handle_generic_exception)
 app.register_error_handler(APIError, handle_api_error)
 
 # Intervalo en minutos para actualizar las noticias
-INTERVALO_ACTUALIZACION = 240  # Puedes modificarlo según tu necesidad
+INTERVALO_ACTUALIZACION = 240  
+
+# Evento para controlar el hilo
+evento_parar = threading.Event()
 
 def actualizar_noticias_periodicamente():
-    """Función que actualiza las noticias periódicamente en segundo plano."""
-    while True:
+    """Actualiza noticias en segundo plano cada INTERVALO_ACTUALIZACION minutos."""
+    while not evento_parar.is_set():
         try:
-            print(f"[{datetime.now()}] Iniciando actualización de noticias...")
+            logging.info("Iniciando actualización de noticias...")
             noticias = obtener_noticias_ciberseguridad()
             if noticias:
                 guardar_noticias_y_limpiar(noticias)
-                print(f"[{datetime.now()}] Noticias actualizadas correctamente.")
+                logging.info("Noticias actualizadas correctamente.")
             else:
-                print(f"[{datetime.now()}] No se encontraron noticias nuevas.")
+                logging.warning("No se encontraron noticias nuevas.")
         except Exception as e:
-            print(f"[{datetime.now()}] Error en la actualización de noticias: {e}")
+            logging.error(f"Error en la actualización de noticias: {e}")
         
         # Esperar el intervalo antes de la próxima actualización
-        time.sleep(INTERVALO_ACTUALIZACION * 60)
+        evento_parar.wait(INTERVALO_ACTUALIZACION * 60)
 
 @app.route('/')
 def mostrar_noticias():
     """Carga y muestra las noticias desde el archivo JSON más reciente."""
-    archivo_json = None
     archivos_json = glob.glob("noticias_ciberseguridad_*.json")
+    if not archivos_json:
+        return render_template('noticias.html', noticias=[])
 
-    if archivos_json:
-        archivo_json = max(archivos_json, key=os.path.getctime)
+    archivo_json = max(archivos_json, key=os.path.getctime)
 
-    noticias = []
-    if archivo_json:
-        try:
-            with open(archivo_json, "r") as f:
-                noticias = json.load(f)
-        except json.JSONDecodeError as e:
-            raise APIError(f"Error al decodificar el archivo JSON: {e}", 500)
-        except Exception as e:
-            raise APIError(f"Error al leer el archivo de noticias: {str(e)}", 500)
+    try:
+        with open(archivo_json, "r", encoding="utf-8") as f:
+            noticias = json.load(f)
+    except json.JSONDecodeError as e:
+        raise APIError(f"Error al decodificar el archivo JSON: {e}", 500)
+    except Exception as e:
+        raise APIError(f"Error al leer el archivo de noticias: {str(e)}", 500)
 
     return render_template('noticias.html', noticias=noticias)
+    """esto es un comentario"""
 
 @app.route('/ads.txt')
 def ads_txt():

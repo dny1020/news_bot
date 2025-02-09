@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6971981546954034"
+             crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -28,32 +30,20 @@
     <!-- Sección de Noticias -->
     <section class="noticias" id="noticias">
         <div class="container">
-            <div id="noticiasIniciales">
-                {% for noticia in noticias[:13] %}
-                <div class="noticia">
-                    <img src="{{ noticia['urlToImage'] or 'default-thumbnail.jpg' }}" alt="Imagen de la noticia" class="noticia-img">
-                    <div>
-                        <h3>{{ noticia['titulo'] }}</h3>
-                        <p>{{ noticia['descripcion'] }}</p>
-                        <p><strong>Publicado el:</strong> {{ noticia['fecha_publicacion'] }}</p>
-                        <a href="{{ noticia['url'] }}" target="_blank" class="leer-mas">Leer más</a>
+            {% for noticia in noticias[:13] %}
+            <div class="noticia">
+                <img src="{{ noticia['urlToImage'] or 'default-thumbnail.jpg' }}" alt="Imagen de la noticia" class="noticia-img">
+                <div>
+                    <h3>{{ noticia['titulo'] }}</h3>
+                    <p>{{ noticia['descripcion'] }}</p>
+                    <p><strong>Publicado el:</strong> {{ noticia['fecha_publicacion'] }}</p>
+                    <button class="leer-mas" onclick="mostrarContenido('{{ noticia['id'] }}')">Leer más</button>
+                    <div id="contenido-{{ noticia['id'] }}" class="contenido-noticia" style="display: none;">
+                        <p>{{ noticia['contenido'] }}</p>
                     </div>
                 </div>
-                {% endfor %}
             </div>
-            <div id="noticiasAdicionales" style="display: none;">
-                {% for noticia in noticias[5:] %}
-                <div class="noticia">
-                    <img src="{{ noticia['urlToImage'] or 'default-thumbnail.jpg' }}" alt="Imagen de la noticia" class="noticia-img">
-                    <div>
-                        <h3>{{ noticia['titulo'] }}</h3>
-                        <p>{{ noticia['descripcion'] }}</p>
-                        <p><strong>Publicado el:</strong> {{ noticia['fecha_publicacion'] }}</p>
-                        <a href="{{ noticia['url'] }}" target="_blank" class="leer-mas">Leer más</a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
     </section>
 
@@ -66,10 +56,14 @@
 
     <!-- JavaScript -->
     <script>
-        document.getElementById('verMasBtn').addEventListener('click', function () {
-            document.getElementById('noticiasAdicionales').style.display = 'block';
-            this.style.display = 'none';
-        });
+        function mostrarContenido(id) {
+            var contenido = document.getElementById('contenido-' + id);
+            if (contenido.style.display === 'none') {
+                contenido.style.display = 'block';
+            } else {
+                contenido.style.display = 'none';
+            }
+        }
     </script>
 </body>
 
